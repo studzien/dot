@@ -20,8 +20,8 @@ independent() ->
 accumulated(Processes) ->
     Mapped = dot_processes:map(Processes, fun map/1),
     Reduced = dot_processes:reduce(Mapped, fun reduce_sum/2),
-    Limited = dot_processes:limit(Reduced, 10),
-    dot_processes:sort(Limited, fun sort/2).
+    Sorted = dot_processes:sort(Reduced, fun sort/2),
+    dot_processes:limit(Sorted, 15).
 
 independent(Processes) ->
     Mapped = dot_processes:map(Processes, fun map/1),
