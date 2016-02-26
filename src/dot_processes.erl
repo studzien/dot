@@ -44,7 +44,7 @@ ancestors(Pid) ->
     proplists:get_value('$ancestors', Dict, []).
 
 overheads(Counts, N) ->
-    [ {#dot_process{id = make_ref(), ancestors = Ancestors}, M}
+    [ {#dot_process{id = make_ref(), ancestors = Ancestors}, {more, M-N}}
       || {Ancestors, M} <- dict:to_list(Counts), M > N ].
 
 do_limit([], _, Counts, Acc) ->

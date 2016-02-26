@@ -27,13 +27,13 @@ file(ProcessValues, LabelFun) ->
      "\n}"].
 
 content(ProcessValues, LabelFun) ->
-    [edges(ProcessValues),
-     vertices(ProcessValues, LabelFun)].
+    [vertices(ProcessValues, LabelFun),
+     edges(ProcessValues)].
 
 vertices(ProcessValues, LabelFun) ->
     [ vertex(Process, Value, LabelFun) || {Process, Value} <- ProcessValues ].
 
-vertex(#dot_process{id = Ref}, Value, _) when is_reference(Ref) ->
+vertex(#dot_process{id = Ref}, {more, Value}, _) when is_reference(Ref) ->
     [ "\t\"", to_list(Ref),
       "\"[label=\"", to_list(Value), " more...\"];\n" ];
 vertex(#dot_process{id = Id}=P, Value, LabelFun) ->

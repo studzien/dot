@@ -15,8 +15,9 @@ accumulated() ->
 accumulated(Processes) ->
     Mapped = dot_processes:map(Processes, fun map/1),
     Reduced = dot_processes:reduce(Mapped, fun reduce_sum/2),
-    Sorted = dot_processes:sort(Reduced, fun sort_path_length_then_mem/2),
-    dot_processes:limit(Sorted, 15).
+    Sorted = dot_processes:sort(Reduced, fun sort_mem/2),
+    Limited = dot_processes:limit(Sorted, 10),
+    dot_processes:sort(Limited, fun sort_mem/2).
 
 label(_, Value) ->
     MB = erlang:round((Value / 1024 / 1024)*1000),
@@ -34,16 +35,9 @@ map(#dot_process{pid = Pid}) ->
 reduce_sum({_, Value}, Acc) ->
     Acc + Value.
 
-sort_mem({_, undefined}, _) ->
+sort_mem({_, {more, _}}, _) ->
     false;
-sort_mem(_, {_, undefined}) ->
+sort_mem(_, {_, {more, _}}) ->
     true;
 sort_mem({_, Mem1}, {_, Mem2}) ->
     Mem1 > Mem2.
-
-sort_path_length_then_mem({#dot_process{ancestors = A1}, _},
-                          {#dot_process{ancestors = A2}, _})
-  when length(A1) =/= length(A2) ->
-    A1 < A2;
-sort_path_length_then_mem(P1, P2) ->
-    sort_mem(P1, P2).
